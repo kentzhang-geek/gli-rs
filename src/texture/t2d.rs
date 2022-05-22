@@ -65,9 +65,9 @@ impl Texture2D {
     }
 
     #[inline]
-    pub fn store(&mut self, ext: extent2d, data : glm::vec4) {
+    pub fn store(&mut self, ext: Extent2d, level: usize, data : [f32; 4]) {
         unsafe {
-            bindings::tex2d_store_4d_(& mut self.ffi, ext, data);
+            bindings::tex2d_store_4d_(& mut self.ffi, glm::ivec2(ext.into()), level, glm::vec4f(data));
         }
     }
 

@@ -4000,6 +4000,21 @@ pub mod root {
                 &mut self.0
             }
         }
+        #[repr(transparent)]
+        pub struct vec4f(pub [f32; 4usize]);
+        impl ::std::ops::Deref for vec4f {
+            type Target = [f32; 4usize];
+            #[inline]
+            fn deref(&self) -> &Self::Target {
+                &self.0
+            }
+        }
+        impl ::std::ops::DerefMut for vec4f {
+            #[inline]
+            fn deref_mut(&mut self) -> &mut Self::Target {
+                &mut self.0
+            }
+        }
     }
     pub mod bindings {
         #[allow(unused_imports)]
@@ -4339,7 +4354,8 @@ pub mod root {
                 pub fn tex2d_store_4d_(
                     tex : *mut root::gli::texture2d,
                     extent : root::gli::texture2d_extent_type,
-                    data : root::glm::vec4
+                    level : root::gli::texture_size_type,
+                    data : root::glm::vec4f
                 );
             }
             extern "C" {
