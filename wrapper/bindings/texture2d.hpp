@@ -74,6 +74,10 @@ extern "C" {
                 return texture2d();
             }
 
+            void tex2d_store_4d_(gli::texture2d &tex, texture2d::extent_type extent, texture2d::size_type level, glm::vec4 data) {
+                tex.store(extent, level, data);
+            }
+
             texture2d tex2d_new_(texture2d::format_type format, texture2d::extent_type extent, texture2d::size_type levels) {
                 return texture2d(format, extent, levels);
             }

@@ -1,4 +1,3 @@
-
 use crate::ffi::root::gli;
 use crate::ffi::root::glm;
 use crate::ffi::root::bindings::Texture2D as bindings;
@@ -9,6 +8,7 @@ use crate::image::GliImage;
 use crate::texture::GliTexture;
 use crate::texture::inner::TextureAccessible;
 use crate::Extent2d;
+use crate::ffi::root::gli::extent2d;
 
 /// 2d texture
 #[repr(transparent)]
@@ -17,7 +17,6 @@ pub struct Texture2D {
 }
 
 impl Texture2D {
-
     /// Create an empty texture 2D.
     #[inline]
     pub fn new_empty() -> Texture2D {
@@ -45,7 +44,6 @@ impl Texture2D {
     /// Create a texture2d view with an existing storage_linear.
     #[inline]
     pub fn share_from_detail(texture: &impl GliTexture, format: Format, base_layer: usize, max_layer: usize, base_face: usize, max_face: usize, base_level: usize, max_level: usize) -> Texture2D {
-
         Texture2D {
             ffi: unsafe { bindings::tex2d_share_from_detail(texture.raw_texture(), format.0, base_layer, max_layer, base_face, max_face, base_level, max_level) }
         }
@@ -54,7 +52,6 @@ impl Texture2D {
     /// Create a texture2d view, reference a subset of an existing texture2d instance.
     #[inline]
     pub fn share_from_subset(texture: &Texture2D, base_level: usize, max_level: usize) -> Texture2D {
-
         Texture2D { ffi: unsafe { bindings::tex2d_share_from_subset(&texture.ffi, base_level, max_level) } }
     }
 
@@ -63,9 +60,15 @@ impl Texture2D {
     /// This method is equivalent to `[]` operator in C++ version.
     #[inline]
     pub fn get_level(&self, level: usize) -> GliImage {
-
         debug_assert!(level < self.levels());
         GliImage::shared_from_texture(self, self.format(), self.base_layer(), self.base_face(), self.base_level() + level)
+    }
+
+    #[inline]
+    pub fn store(&mut self, ext: extent2d, data : glm::vec4) {
+        unsafe {
+            bindings::tex2d_store_4d_(& mut self.ffi, ext, data);
+        }
     }
 
     #[doc(hidden)]
@@ -81,7 +84,6 @@ impl GliTexture for Texture2D {
 }
 
 impl TextureAccessible for Texture2D {
-
     fn raw_texture(&self) -> &gli::texture {
         &self.ffi._base
     }
@@ -92,17 +94,14 @@ impl TextureAccessible for Texture2D {
 }
 
 impl From<gli::texture> for Texture2D {
-
     fn from(ffi: gli::texture) -> Texture2D {
         Texture2D { ffi: gli::texture2d { _base: ffi } }
     }
 }
 
 impl std::cmp::PartialEq for Texture2D {
-
     /// Compare two textures. Two textures are the same when the data, the format and the targets are the same.
     fn eq(&self, other: &Texture2D) -> bool {
-
         use crate::ffi::root::bindings::Comparison::is_texture_equal;
 
         unsafe {
@@ -112,7 +111,6 @@ impl std::cmp::PartialEq for Texture2D {
 
     /// Compare two textures. Two textures are the same when the data, the format and the targets are the same.
     fn ne(&self, other: &Texture2D) -> bool {
-
         use crate::ffi::root::bindings::Comparison::is_texture_unequal;
 
         unsafe {
